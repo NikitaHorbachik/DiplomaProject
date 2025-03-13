@@ -13,6 +13,7 @@ import org.nharbachyk.diplomabackend.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +24,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Long create(CreateUserRequest createUser) {
         UserEntity userEntity = userMapper.toEntity(createUser);
 
-        //String unencryptedPassword = userEntity.getPassword();
-        //String encryptedPassword = passwordEncoder.encode(unencryptedPassword);
-        //userEntity.setPassword(encryptedPassword);
+        String unencryptedPassword = userEntity.getPassword();
+        String encryptedPassword = passwordEncoder.encode(unencryptedPassword);
+        userEntity.setPassword(encryptedPassword);
 
         return userRepository.save(userEntity).getId();
     }

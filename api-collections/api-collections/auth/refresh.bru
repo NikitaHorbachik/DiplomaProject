@@ -1,0 +1,15 @@
+meta {
+  name: refresh
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{path}}/refresh
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZWN1cmVkIiwiaWF0IjoxNzQxODc4MzU3LCJleHAiOjE3NDMwODc5NTd9.nIJc-XKopkJAOoKbiZFwXsFZIx2MBW_Q9G0S-u7vSJI
+}
