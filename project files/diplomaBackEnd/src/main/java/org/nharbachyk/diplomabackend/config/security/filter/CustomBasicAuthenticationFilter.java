@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
-import org.nharbachyk.diplomabackend.utils.JwtUtils;
+import org.nharbachyk.diplomabackend.service.TokenService;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -19,20 +19,19 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class CustomBasicAuthenticationFilter extends BasicAuthenticationFilter {
 
-    private final JwtUtils jwtUtils;
+    private final TokenService tokenService;
 
     private final String AUTH_PATH = "/api/v1/auth";
     private final RequestMatcher requestMatcher = new AntPathRequestMatcher(AUTH_PATH);
     private final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 
-    public CustomBasicAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+    public CustomBasicAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
         super(authenticationManager);
-        this.jwtUtils = jwtUtils;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -52,9 +51,9 @@ public class CustomBasicAuthenticationFilter extends BasicAuthenticationFilter {
                                               Authentication authResult) throws IOException {
         SecurityContextHolder.getContext().setAuthentication(authResult);
         UserDetails principal = (UserDetails) authResult.getPrincipal();
-        List<String> tokens = jwtUtils.generateTokens(principal.getUsername());
-        TokenResponse tokenResponse = new TokenResponse(tokens);
+        TokenResponse tokenResponse = tokenService.generateTokens(principal.getUsername());
         converter.write(tokenResponse, MediaType.APPLICATION_JSON, new ServletServerHttpResponse(response));
     }
 
 }
+

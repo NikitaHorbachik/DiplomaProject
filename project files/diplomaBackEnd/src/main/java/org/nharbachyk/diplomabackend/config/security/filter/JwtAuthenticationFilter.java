@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.config.security.authToken.JwtAuthenticationToken;
-import org.nharbachyk.diplomabackend.utils.JwtUtils;
+import org.nharbachyk.diplomabackend.service.TokenService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +24,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtils jwtUtils;
+    private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
 
     @Override
@@ -34,10 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorizationHeader != null) {
             authorizationHeader = authorizationHeader.trim();
-            if (authorizationHeader.startsWith(JwtUtils.BEARER_TOKEN)) {
+            if (authorizationHeader.startsWith(TokenService.BEARER_TOKEN)) {
                 String accessToken = authorizationHeader.substring(7);
                 try {
-                    String username = jwtUtils.extractUsername(accessToken);
+                    String username = tokenService.extractUsername(accessToken);
                     JwtAuthenticationToken jwtAuthToken = new JwtAuthenticationToken(username, accessToken);
                     Authentication authentication = authenticationManager.authenticate(jwtAuthToken);
                     SecurityContextHolder.getContext().setAuthentication(authentication);

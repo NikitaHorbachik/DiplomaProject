@@ -4,7 +4,7 @@ package org.nharbachyk.diplomabackend.config.security.provider;
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.config.security.authToken.JwtAuthenticationToken;
 import org.nharbachyk.diplomabackend.exceptions.InvalidJwtTokenException;
-import org.nharbachyk.diplomabackend.utils.JwtUtils;
+import org.nharbachyk.diplomabackend.service.TokenService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
-    private final JwtUtils jwtUtils;
+    private final TokenService tokenService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -26,7 +26,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String username = jwtAuthToken.getPrincipal();
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        if (jwtUtils.validateToken(jwt, userDetails)) {
+        if (tokenService.validateToken(jwt, userDetails)) {
             return jwtAuthToken;
         } else {
             throw new InvalidJwtTokenException();
