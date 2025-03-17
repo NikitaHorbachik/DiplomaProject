@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
 import org.nharbachyk.diplomabackend.service.TokenService;
+import org.nharbachyk.diplomabackend.utils.SecurityUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -25,8 +26,7 @@ public class CustomBasicAuthenticationFilter extends BasicAuthenticationFilter {
 
     private final TokenService tokenService;
 
-    private final String AUTH_PATH = "/api/v1/auth";
-    private final RequestMatcher requestMatcher = new AntPathRequestMatcher(AUTH_PATH);
+    private final RequestMatcher requestMatcher = new AntPathRequestMatcher(SecurityUtils.AUTH_PATH);
     private final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 
     public CustomBasicAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
@@ -56,4 +56,3 @@ public class CustomBasicAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
 }
-

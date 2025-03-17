@@ -1,14 +1,10 @@
 package org.nharbachyk.diplomabackend.repository.redis;
 
-import org.nharbachyk.diplomabackend.entities.AccessTokenEntity;
+import org.nharbachyk.diplomabackend.entities.redis.AccessTokenEntity;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Optional;
+public interface AccessTokenRepository extends CrudRepository<AccessTokenEntity, String> {
 
-public interface AccessTokenRepository extends CrudRepository<AccessTokenEntity, Long> {
-
-    Optional<AccessTokenEntity> findByUsername(String username);
-
-    void deleteByUsername(String username);
+    boolean existsByUsername(String username);
 
 }

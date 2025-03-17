@@ -11,13 +11,12 @@ import org.nharbachyk.diplomabackend.config.security.authToken.JwtAuthentication
 import org.nharbachyk.diplomabackend.controller.request.RefreshTokenRequest;
 import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
 import org.nharbachyk.diplomabackend.service.TokenService;
+import org.nharbachyk.diplomabackend.utils.SecurityUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
@@ -34,8 +33,8 @@ public class RefreshJwtFilter extends OncePerRequestFilter {
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
 
-    private final String AUTH_PATH = "/api/v1/refresh";
-    private final RequestMatcher requestMatcher = new AntPathRequestMatcher(AUTH_PATH);
+
+    private final RequestMatcher requestMatcher = new AntPathRequestMatcher(SecurityUtils.REFRESH_PATH);
     private final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 
 
@@ -53,17 +52,10 @@ public class RefreshJwtFilter extends OncePerRequestFilter {
         String token = refreshTokenRequest.refreshToken();
         String username = tokenService.extractUsername(token);
         JwtAuthenticationToken jwtAuthToken = new JwtAuthenticationToken(username, token);
-        Authentication authentication = authenticationManager.authenticate(jwtAuthToken);
-        tryRefreshTokens(response, authentication);
-    }
 
-    private void tryRefreshTokens(HttpServletResponse response, Authentication authResult) throws IOException {
-        SecurityContextHolder.getContext().setAuthentication(authResult);
-        JwtAuthenticationToken jwtAuthToken = (JwtAuthenticationToken) authResult;
-        String principal = (String) authResult.getPrincipal();
-        String token = jwtAuthToken.getToken();
         try {
-            TokenResponse tokenResponse = tokenService.refreshTokens(principal, token);
+            authenticationManager.authenticate(jwtAuthToken);
+            TokenResponse tokenResponse = tokenService.refreshTokens(username, token);
             converter.write(tokenResponse, MediaType.APPLICATION_JSON, new ServletServerHttpResponse(response));
         } catch (AuthenticationException authenticationException) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());

@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.config.security.filter.CustomBasicAuthenticationFilter;
 import org.nharbachyk.diplomabackend.config.security.filter.JwtAuthenticationFilter;
 import org.nharbachyk.diplomabackend.config.security.filter.RefreshJwtFilter;
-import org.nharbachyk.diplomabackend.config.security.handler.JwtCleanupLogoutHandler;
+import org.nharbachyk.diplomabackend.config.security.handler.JwtLogoutHandler;
+import org.nharbachyk.diplomabackend.utils.SecurityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -44,17 +45,17 @@ public class SecurityConfig {
                                            JwtAuthenticationFilter jwtAuthFilter,
                                            CustomBasicAuthenticationFilter customBasicAuthFilter,
                                            RefreshJwtFilter refreshJwtFilter,
-                                           JwtCleanupLogoutHandler jwtCleanupLogoutHandler) throws Exception {
+                                           JwtLogoutHandler jwtLogoutHandler) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/api/v1/auth").permitAll()
-                                .requestMatchers("/api/v1/refresh").permitAll()
+                        authorize.requestMatchers(SecurityUtils.AUTH_PATH).permitAll()
+                                .requestMatchers(SecurityUtils.REFRESH_PATH).permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .requestMatchers("/api/v1/**").authenticated()
                                 .anyRequest().authenticated())
                 .logout(logout ->
-                        logout.logoutUrl("/api/v1/logout")
-                                .addLogoutHandler(jwtCleanupLogoutHandler)
+                        logout.logoutUrl(SecurityUtils.LOGOUT_PATH)
+                                .addLogoutHandler(jwtLogoutHandler)
                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)).permitAll())
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling

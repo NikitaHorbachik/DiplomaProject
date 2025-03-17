@@ -6,10 +6,12 @@ meta {
 
 post {
   url: {{path}}/refresh
-  body: none
-  auth: bearer
+  body: json
+  auth: none
 }
 
-auth:bearer {
-  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZWN1cmVkIiwiaWF0IjoxNzQyMDYyNTE5LCJleHAiOjIyNTY5MDg2MjUxOX0.HB2jDhE4FbOhrycGhIVP7pFJ9uY5HQsZ8mhvlKL6Wxw
+body:json {
+  {
+    "refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZWN1cmVkIiwiaWF0IjoxNzQyMjM0NzQ3LCJleHAiOjIyNTY5MTAzNDc0N30.Di-FBg-FAMujx-K7KjoSk0l5KdXb7lDT6P_pR8fAdj4"
+  }
 }

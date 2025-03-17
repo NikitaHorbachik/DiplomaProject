@@ -2,18 +2,19 @@ package org.nharbachyk.diplomabackend.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
-import org.nharbachyk.diplomabackend.entities.AccessTokenEntity;
-import org.nharbachyk.diplomabackend.entities.RefreshTokenEntity;
+import org.nharbachyk.diplomabackend.entities.redis.AccessTokenEntity;
+import org.nharbachyk.diplomabackend.entities.redis.RefreshTokenEntity;
 import org.nharbachyk.diplomabackend.exceptions.InvalidJwtTokenException;
 import org.nharbachyk.diplomabackend.repository.redis.AccessTokenRepository;
 import org.nharbachyk.diplomabackend.repository.redis.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -25,8 +26,8 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    private final RefreshTokenRepository refreshTokenRepository;
     private final AccessTokenRepository accessTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private SecretKey secretKey;
     private Duration accessExpirationDuration;
@@ -41,105 +42,26 @@ public class TokenServiceImpl implements TokenService {
     @Value("${security.access-secret-key-string}")
     private byte[] accessSecretKeyValue;
 
-    @PostConstruct
-    private void init() {
-        secretKey = Keys.hmacShaKeyFor(accessSecretKeyValue);
-        accessSecretKeyValue = null;
-        accessExpirationDuration = Duration.ofHours(accessTokenExpirationInHours);
-        refreshExpirationDuration = Duration.ofDays(refreshTokenExpirationInDays);
-    }
-
-    @Override
-    public String getRefreshToken(String username) {
-        return refreshTokenRepository.findByUsername(username)
-                .orElseThrow(InvalidJwtTokenException::new)
-                .getToken();
-    }
-
-    @Override
-    public void saveRefreshToken(String username, String refreshToken) {
-        RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
-        refreshTokenEntity.setUsername(username);
-        refreshTokenEntity.setToken(refreshToken);
-        refreshTokenRepository.save(refreshTokenEntity);
-    }
-
-    @Override
-    public void deleteRefreshToken(String username) {
-        refreshTokenRepository.deleteByUsername(username);
-    }
-
-    @Override
-    public String getAccessToken(String username) {
-        return accessTokenRepository.findByUsername(username)
-                .orElseThrow(InvalidJwtTokenException::new)
-                .getToken();
-    }
-
-    @Override
-    public void saveAccessToken(String username, String refreshToken) {
-        AccessTokenEntity accessTokenEntity = new AccessTokenEntity();
-        accessTokenEntity.setUsername(username);
-        accessTokenEntity.setToken(refreshToken);
-        accessTokenRepository.save(accessTokenEntity);
-    }
-
-    @Override
-    public void deleteAccessToken(String username) {
-        accessTokenRepository.deleteByUsername(username);
-    }
-
     @Override
     public TokenResponse generateTokens(String username) {
-        String accessToken = generateAccessToken(username);
-        String refreshToken = generateRefreshToken(username);
-        saveRefreshToken(username, refreshToken);
+        if (accessTokenRepository.existsByUsername(username) || refreshTokenRepository.existsByUsername(username)) {
+            invalidateTokens(username);
+        }
+        String accessToken = generateToken(username, accessExpirationDuration.toMillis());
         saveAccessToken(username, accessToken);
+        String refreshToken = generateToken(username, refreshExpirationDuration.toMillis());
+        saveRefreshToken(username, refreshToken);
         return new TokenResponse(accessToken, refreshToken);
     }
 
-    private String generateAccessToken(String username) {
-        long currentTimeMillis = System.currentTimeMillis();
-        return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date(currentTimeMillis))
-                .expiration(new Date(currentTimeMillis + accessExpirationDuration.toMillis()))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    private String generateRefreshToken(String username) {
-        long currentTimeMillis = System.currentTimeMillis();
-        return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date(currentTimeMillis))
-                .expiration(new Date(currentTimeMillis + refreshExpirationDuration.toMillis()))
-                .signWith(secretKey)
-                .compact();
-    }
-
     @Override
-    public String extractUsername(String token) {
+    public String extractUsername(String token) throws MalformedJwtException, SignatureException {
         return extractClaim(token, Claims::getSubject);
     }
 
     @Override
-    public Date extractExpiration(String token) {
+    public Date extractExpiration(String token) throws MalformedJwtException, SignatureException {
         return extractClaim(token, Claims::getExpiration);
-    }
-
-    @Override
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
     }
 
     @Override
@@ -148,21 +70,27 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Boolean validateToken(String token, UserDetails userDetails) throws AuthenticationException {
-        final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    public boolean validateToken(String token, String username) throws AuthenticationException {
+        String tokenUsername = extractUsername(token);
+        return username.equals(tokenUsername) && !isTokenExpired(token);
+    }
+
+    @Override
+    public boolean validateAccessToken(String token, String username) throws AuthenticationException {
+        String storedToken = getAccessTokenOrThrow(username);
+        return token.equals(storedToken);
     }
 
     @Override
     public boolean validateRefreshToken(String username, String refreshToken) {
-        String storedRefreshToken = getRefreshToken(username);
-        return refreshToken.equals(storedRefreshToken);
+        String storedToken = getRefreshTokenOrThrow(username);
+        return refreshToken.equals(storedToken);
     }
 
     @Override
     public void invalidateTokens(String username) {
-        deleteRefreshToken(username);
         deleteAccessToken(username);
+        deleteRefreshToken(username);
     }
 
     @Override
@@ -171,8 +99,72 @@ public class TokenServiceImpl implements TokenService {
             throw new AuthenticationException("Invalid refresh token") {
             };
         }
-        deleteRefreshToken(username);
         return generateTokens(username);
+    }
+
+    @PostConstruct
+    private void init() {
+        secretKey = Keys.hmacShaKeyFor(accessSecretKeyValue);
+        accessSecretKeyValue = null;
+        accessExpirationDuration = Duration.ofHours(accessTokenExpirationInHours);
+        refreshExpirationDuration = Duration.ofDays(refreshTokenExpirationInDays);
+    }
+
+    private void saveAccessToken(String username, String accessToken) {
+        AccessTokenEntity accessTokenEntity = new AccessTokenEntity();
+        accessTokenEntity.setUsername(username);
+        accessTokenEntity.setToken(accessToken);
+        accessTokenRepository.save(accessTokenEntity);
+    }
+
+    private void saveRefreshToken(String username, String refreshToken) {
+        RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
+        refreshTokenEntity.setUsername(username);
+        refreshTokenEntity.setToken(refreshToken);
+        refreshTokenRepository.save(refreshTokenEntity);
+    }
+
+    private String getAccessTokenOrThrow(String username) {
+        return accessTokenRepository.findById(username)
+                .orElseThrow(InvalidJwtTokenException::new)
+                .getToken();
+    }
+
+    private String getRefreshTokenOrThrow(String username) {
+        return refreshTokenRepository.findById(username)
+                .orElseThrow(InvalidJwtTokenException::new)
+                .getToken();
+    }
+
+    private void deleteAccessToken(String username) {
+        accessTokenRepository.deleteById(username);
+    }
+
+    private void deleteRefreshToken(String username) {
+        refreshTokenRepository.deleteById(username);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws MalformedJwtException, SignatureException {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) throws MalformedJwtException, SignatureException {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    private String generateToken(String username, Long expirationMs) {
+        long currentTimeMillis = System.currentTimeMillis();
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date(currentTimeMillis))
+                .expiration(new Date(currentTimeMillis + expirationMs))
+                .signWith(secretKey)
+                .compact();
     }
 
 }

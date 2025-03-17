@@ -7,9 +7,13 @@ meta {
 get {
   url: {{path}}/users?size=20
   body: none
-  auth: none
+  auth: bearer
 }
 
 params:query {
   size: 20
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZWN1cmVkIiwiaWF0IjoxNzQyMjM0NzQ3LCJleHAiOjE4OTc3NTQ3NDd9.pju8l-OH-YQK6iWAodW7op1xn_xfL-HES3MDuJUZimg
 }
