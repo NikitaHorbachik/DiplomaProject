@@ -7,7 +7,11 @@ meta {
 post {
   url: {{path}}/users
   body: json
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZWN1cmVkIiwiaWF0IjoxNzQxODkyNjc5LCJleHAiOjE3NDE4OTYyNzl9._QHRfY16hgMETQa2UQOa5vn_i4HHbYJwOo3SIx9CvEY
 }
 
 body:json {
