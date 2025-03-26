@@ -4,6 +4,6 @@ import org.springframework.security.core.AuthenticationException;
 
 public class InvalidJwtTokenException extends AuthenticationException {
     public InvalidJwtTokenException() {
-        super("Token is invalid");
+        super("Invalid JWT token");
     }
 }

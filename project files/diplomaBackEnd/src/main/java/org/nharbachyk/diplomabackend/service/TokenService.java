@@ -1,24 +1,21 @@
 package org.nharbachyk.diplomabackend.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
+import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
+import org.springframework.security.core.AuthenticationException;
 
-@Service
-@RequiredArgsConstructor
-public class TokenService {
+public interface TokenService {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    TokenResponse generateTokens(String username);
 
-    public void saveRefreshToken(String username, String refreshToken) {
-        redisTemplate.opsForValue().set(username, refreshToken);
-    }
+    String getUsernameFromToken(String token);
 
-    public String getRefreshToken(String username) {
-        return redisTemplate.opsForValue().get(username);
-    }
+    boolean validateToken(String token, String username) throws AuthenticationException;
 
-    public void deleteRefreshToken(String username) {
-        redisTemplate.delete(username);
-    }
+    boolean validateAccessToken(String token) throws AuthenticationException;
+
+    void invalidateTokens(String username);
+
+    TokenResponse refreshTokens(String username, String refreshToken);
+
 }
+
