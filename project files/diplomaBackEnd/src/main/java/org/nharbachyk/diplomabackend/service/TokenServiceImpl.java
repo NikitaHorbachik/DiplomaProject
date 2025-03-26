@@ -1,26 +1,20 @@
 package org.nharbachyk.diplomabackend.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
 import org.nharbachyk.diplomabackend.entities.redis.AccessTokenEntity;
 import org.nharbachyk.diplomabackend.entities.redis.RefreshTokenEntity;
-import org.nharbachyk.diplomabackend.exceptions.InvalidJwtTokenException;
 import org.nharbachyk.diplomabackend.repository.redis.AccessTokenRepository;
 import org.nharbachyk.diplomabackend.repository.redis.RefreshTokenRepository;
+import org.nharbachyk.diplomabackend.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
-import java.util.Date;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +23,9 @@ public class TokenServiceImpl implements TokenService {
     private final AccessTokenRepository accessTokenRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private SecretKey secretKey;
     private Duration accessExpirationDuration;
     private Duration refreshExpirationDuration;
+    private SecretKey secretKey;
 
     @Value("${security.access-token-expiration}")
     private int accessTokenExpirationInHours;
@@ -39,63 +33,48 @@ public class TokenServiceImpl implements TokenService {
     @Value("${security.refresh-token-expiration}")
     private int refreshTokenExpirationInDays;
 
-    @Value("${security.access-secret-key-string}")
-    private byte[] accessSecretKeyValue;
+    @Value("${security.secret-key-string}")
+    private byte[] secretKeyValue;
 
     @Override
     public TokenResponse generateTokens(String username) {
         if (accessTokenRepository.existsByUsername(username) || refreshTokenRepository.existsByUsername(username)) {
             invalidateTokens(username);
         }
-        String accessToken = generateToken(username, accessExpirationDuration.toMillis());
+        String accessToken = JwtUtils.generateToken(username, accessExpirationDuration.toMillis(), secretKey);
         saveAccessToken(username, accessToken);
-        String refreshToken = generateToken(username, refreshExpirationDuration.toMillis());
+        String refreshToken = JwtUtils.generateToken(username, refreshExpirationDuration.toMillis(), secretKey);
         saveRefreshToken(username, refreshToken);
         return new TokenResponse(accessToken, refreshToken);
     }
 
     @Override
-    public String extractUsername(String token) throws MalformedJwtException, SignatureException {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    @Override
-    public Date extractExpiration(String token) throws MalformedJwtException, SignatureException {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-    @Override
-    public Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    public String getUsernameFromToken(String token) {
+        return JwtUtils.extractUsername(token, secretKey);
     }
 
     @Override
     public boolean validateToken(String token, String username) throws AuthenticationException {
-        String tokenUsername = extractUsername(token);
-        return username.equals(tokenUsername) && !isTokenExpired(token);
+        String tokenUsername = JwtUtils.extractUsername(token, secretKey);
+        return username.equals(tokenUsername) && !JwtUtils.isTokenExpired(token, secretKey);
     }
 
     @Override
-    public boolean validateAccessToken(String token, String username) throws AuthenticationException {
-        String storedToken = getAccessTokenOrThrow(username);
-        return token.equals(storedToken);
+    public boolean validateAccessToken(String token) {
+        return accessTokenRepository.existsByToken(token);
     }
 
     @Override
-    public boolean validateRefreshToken(String username, String refreshToken) {
-        String storedToken = getRefreshTokenOrThrow(username);
-        return refreshToken.equals(storedToken);
-    }
-
-    @Override
-    public void invalidateTokens(String username) {
-        deleteAccessToken(username);
-        deleteRefreshToken(username);
+    public void invalidateTokens(String token) {
+        String username = JwtUtils.extractUsername(token, secretKey);
+        accessTokenRepository.deleteById(username);
+        refreshTokenRepository.deleteById(username);
     }
 
     @Override
     public TokenResponse refreshTokens(String username, String refreshToken) {
-        if (!validateRefreshToken(username, refreshToken)) {
+        boolean hasRefreshToken = refreshTokenRepository.existsByToken(refreshToken);
+        if (!hasRefreshToken) {
             throw new AuthenticationException("Invalid refresh token") {
             };
         }
@@ -104,8 +83,8 @@ public class TokenServiceImpl implements TokenService {
 
     @PostConstruct
     private void init() {
-        secretKey = Keys.hmacShaKeyFor(accessSecretKeyValue);
-        accessSecretKeyValue = null;
+        secretKey = Keys.hmacShaKeyFor(secretKeyValue);
+        secretKeyValue = null;
         accessExpirationDuration = Duration.ofHours(accessTokenExpirationInHours);
         refreshExpirationDuration = Duration.ofDays(refreshTokenExpirationInDays);
     }
@@ -122,49 +101,6 @@ public class TokenServiceImpl implements TokenService {
         refreshTokenEntity.setUsername(username);
         refreshTokenEntity.setToken(refreshToken);
         refreshTokenRepository.save(refreshTokenEntity);
-    }
-
-    private String getAccessTokenOrThrow(String username) {
-        return accessTokenRepository.findById(username)
-                .orElseThrow(InvalidJwtTokenException::new)
-                .getToken();
-    }
-
-    private String getRefreshTokenOrThrow(String username) {
-        return refreshTokenRepository.findById(username)
-                .orElseThrow(InvalidJwtTokenException::new)
-                .getToken();
-    }
-
-    private void deleteAccessToken(String username) {
-        accessTokenRepository.deleteById(username);
-    }
-
-    private void deleteRefreshToken(String username) {
-        refreshTokenRepository.deleteById(username);
-    }
-
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws MalformedJwtException, SignatureException {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    private Claims extractAllClaims(String token) throws MalformedJwtException, SignatureException {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
-
-    private String generateToken(String username, Long expirationMs) {
-        long currentTimeMillis = System.currentTimeMillis();
-        return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date(currentTimeMillis))
-                .expiration(new Date(currentTimeMillis + expirationMs))
-                .signWith(secretKey)
-                .compact();
     }
 
 }

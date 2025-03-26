@@ -7,5 +7,7 @@ public interface RefreshTokenRepository extends CrudRepository<RefreshTokenEntit
 
     boolean existsByUsername(String username);
 
+    boolean existsByToken(String token);
+
 }
 

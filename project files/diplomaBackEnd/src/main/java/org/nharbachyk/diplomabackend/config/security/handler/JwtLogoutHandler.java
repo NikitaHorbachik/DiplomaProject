@@ -20,18 +20,17 @@ public class JwtLogoutHandler implements LogoutHandler {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authorizationHeader != null) {
-            authorizationHeader = authorizationHeader.trim();
-            if (authorizationHeader.startsWith(SecurityUtils.BEARER_TOKEN)) {
-                String accessToken = authorizationHeader.substring(7);
-                try {
-                    String username = tokenService.extractUsername(accessToken);
-                    tokenService.invalidateTokens(username);
-                } catch (ExpiredJwtException e) {
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                }
-            }
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (authHeader == null || !authHeader.trim().startsWith(SecurityUtils.BEARER_TOKEN)) {
+            return;
+        }
+
+        String accessToken = authHeader.substring(7);
+        try {
+            tokenService.invalidateTokens(accessToken);
+        } catch (ExpiredJwtException e) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
     }
 }

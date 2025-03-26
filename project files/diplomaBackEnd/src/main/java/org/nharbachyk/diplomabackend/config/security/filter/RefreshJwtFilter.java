@@ -50,7 +50,7 @@ public class RefreshJwtFilter extends OncePerRequestFilter {
     private void filterRefreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         RefreshTokenRequest refreshTokenRequest = objectMapper.readValue(request.getInputStream(), RefreshTokenRequest.class);
         String token = refreshTokenRequest.refreshToken();
-        String username = tokenService.extractUsername(token);
+        String username = tokenService.getUsernameFromToken(token);
         JwtAuthenticationToken jwtAuthToken = new JwtAuthenticationToken(username, token);
 
         try {
@@ -60,7 +60,6 @@ public class RefreshJwtFilter extends OncePerRequestFilter {
         } catch (AuthenticationException authenticationException) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
         }
-
     }
 
 }

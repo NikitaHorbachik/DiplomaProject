@@ -7,4 +7,6 @@ public interface AccessTokenRepository extends CrudRepository<AccessTokenEntity,
 
     boolean existsByUsername(String username);
 
+    boolean existsByToken(String token);
+
 }

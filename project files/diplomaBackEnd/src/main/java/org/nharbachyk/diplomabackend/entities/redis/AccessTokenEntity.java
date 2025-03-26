@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
 
 @RedisHash("AccessTokenEntity")
 @Getter
@@ -23,6 +24,7 @@ public class AccessTokenEntity {
     @Value("#{${security.access-token-expiration}}")
     private Long expirationInSeconds;
 
+    @Indexed
     private String token;
 
 }
