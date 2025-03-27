@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.config.security.filter.CustomBasicAuthenticationFilter;
 import org.nharbachyk.diplomabackend.config.security.filter.JwtAuthenticationFilter;
 import org.nharbachyk.diplomabackend.config.security.filter.RefreshJwtFilter;
+import org.nharbachyk.diplomabackend.config.security.handler.JwtLogoutHandler;
+import org.nharbachyk.diplomabackend.utils.SecurityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -41,15 +44,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            JwtAuthenticationFilter jwtAuthFilter,
                                            CustomBasicAuthenticationFilter customBasicAuthFilter,
-                                           RefreshJwtFilter refreshJwtFilter) throws Exception {
+                                           RefreshJwtFilter refreshJwtFilter,
+                                           JwtLogoutHandler jwtLogoutHandler) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/api/v1/auth").permitAll()
-                                .requestMatchers("/api/v1/refresh").permitAll()
+                        authorize.requestMatchers(SecurityUtils.AUTH_PATH).permitAll()
+                                .requestMatchers(SecurityUtils.REFRESH_PATH).permitAll()
                                 .requestMatchers("/error").permitAll()
-                                .requestMatchers("/api/v1/**").permitAll()
-                                .requestMatchers("/api/v1/logout").authenticated()
+                                .requestMatchers("/api/v1/**").authenticated()
                                 .anyRequest().authenticated())
+                .logout(logout ->
+                        logout.logoutUrl(SecurityUtils.LOGOUT_PATH)
+                                .addLogoutHandler(jwtLogoutHandler)
+                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)).permitAll())
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
                                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
@@ -61,3 +68,4 @@ public class SecurityConfig {
     }
 
 }
+

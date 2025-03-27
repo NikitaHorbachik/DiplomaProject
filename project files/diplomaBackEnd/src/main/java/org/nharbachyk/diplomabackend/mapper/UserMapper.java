@@ -41,7 +41,6 @@ public class UserMapper {
     }
 
     public void updateEntity(UpdateUserRequest updateUser, UserEntity updatedUser) {
-        updatedUser.setEmail(updateUser.email());
         updatedUser.setName(updateUser.name());
         updatedUser.setSurname(updateUser.surname());
     }

@@ -1,4 +1,6 @@
 package org.nharbachyk.diplomabackend.controller.request;
 
-public record RoleRequest(String name) {
+import jakarta.validation.constraints.NotBlank;
+
+public record RoleRequest(@NotBlank String name) {
 }
