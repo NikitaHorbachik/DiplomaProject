@@ -1,8 +1,7 @@
 package org.nharbachyk.diplomabackend.service;
 
 import jakarta.validation.Valid;
-import org.nharbachyk.diplomabackend.controller.request.CreateUserRequest;
-import org.nharbachyk.diplomabackend.controller.request.UpdateUserRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.*;
 import org.nharbachyk.diplomabackend.controller.response.UserResponse;
 import org.nharbachyk.diplomabackend.entities.UserEntity;
 import org.springframework.data.domain.Page;
@@ -24,6 +23,12 @@ public interface UserService {
     UserEntity findByLoginOrThrow(String username) throws UsernameNotFoundException;
 
     void update(Long id, @Valid UpdateUserRequest updateUser);
+
+    void updateEmail(Long id, @Valid UpdateUserEmailRequest request, String login);
+
+    void updatePassword(Long id, @Valid UpdateUserPasswordRequest request, String login);
+
+    void updateLogin(Long id, @Valid UpdateUserLoginRequest request, String login);
 
     @Transactional
     void addRole(Long id, Long roleId);
