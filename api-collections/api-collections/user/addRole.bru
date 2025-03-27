@@ -5,7 +5,7 @@ meta {
 }
 
 patch {
-  url: {{path}}/users/{{id}}/roles
+  url: {{path}}/users/{{id}}/roles/{{roleId}}
   body: json
   auth: none
 }
@@ -16,4 +16,5 @@ body:json {
 
 vars:pre-request {
   id: 9
+  roleId: 1
 }

@@ -1,8 +1,7 @@
 package org.nharbachyk.diplomabackend.service;
 
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.request.CreateUserRequest;
-import org.nharbachyk.diplomabackend.controller.request.UpdateUserRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.*;
 import org.nharbachyk.diplomabackend.controller.response.UserResponse;
 import org.nharbachyk.diplomabackend.entities.RoleEntity;
 import org.nharbachyk.diplomabackend.entities.UserEntity;
@@ -12,6 +11,7 @@ import org.nharbachyk.diplomabackend.repository.jpa.RoleRepository;
 import org.nharbachyk.diplomabackend.repository.jpa.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -63,6 +63,45 @@ public class UserServiceImpl implements UserService {
         UserEntity updatedUser = getByIdOrThrow(id);
         userMapper.updateEntity(updateUser, updatedUser);
         userRepository.save(updatedUser);
+    }
+
+    @Override
+    public void updateEmail(Long id, UpdateUserEmailRequest request, String login) {
+        UserEntity user = getByIdOrThrow(id);
+
+        if (!user.getUsername().equals(login)) {
+            throw new AccessDeniedException("You can only change your own email");
+        }
+
+        user.setEmail(request.email());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void updatePassword(Long id, UpdateUserPasswordRequest request, String login) {
+        UserEntity user = getByIdOrThrow(id);
+
+        if (!user.getUsername().equals(login)) {
+            throw new AccessDeniedException("You can only change your own email");
+        }
+        if(passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new AccessDeniedException("You cannot use your old password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.password()));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void updateLogin(Long id, UpdateUserLoginRequest request, String login) {
+        UserEntity user = getByIdOrThrow(id);
+
+        if (!user.getUsername().equals(login)) {
+            throw new AccessDeniedException("You can only change your own login");
+        }
+
+        user.setUsername(request.username());
+        userRepository.save(user);
     }
 
     @Transactional
