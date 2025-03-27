@@ -19,7 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public Long create(@RequestBody CreateUserRequest createUserRequest) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Long create(@RequestBody @Valid CreateUserRequest createUserRequest) {
         return userService.create(createUserRequest);
     }
 
