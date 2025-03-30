@@ -1,0 +1,25 @@
+meta {
+  name: updateLogin
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{path}}/users/{{id}}/login
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0X3VzZXIiLCJpYXQiOjE3NDMwODMzMDQsImV4cCI6MTg5ODYwMzMwNH0.FxgUcxdl2bhRO23TGDEdg_j4GRxGxFu9pq6YqwXDbFg
+}
+
+body:json {
+  {
+    "username": "new_test"
+  }
+}
+
+vars:pre-request {
+  id: 17
+}

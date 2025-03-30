@@ -57,4 +57,5 @@ public class UserController {
     public void removeRole(@PathVariable Long id, @RequestBody Long roleId) {
         userService.removeRole(id, roleId);
     }
+
 }

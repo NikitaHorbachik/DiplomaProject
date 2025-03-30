@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.nharbachyk.diplomabackend.controller.request.CreateUserRequest;
 import org.nharbachyk.diplomabackend.controller.request.UpdateUserRequest;
 import org.nharbachyk.diplomabackend.controller.response.UserResponse;
-import org.nharbachyk.diplomabackend.entities.UserEntity;
+import org.nharbachyk.diplomabackend.entities.user.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
