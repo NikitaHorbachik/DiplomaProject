@@ -2,14 +2,16 @@ package org.nharbachyk.diplomabackend.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.request.CreateUserRequest;
-import org.nharbachyk.diplomabackend.controller.request.UpdateUserRequest;
-import org.nharbachyk.diplomabackend.controller.response.UserResponse;
+import org.nharbachyk.diplomabackend.controller.request.user.CreateUserRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.UpdateUserRequest;
+import org.nharbachyk.diplomabackend.controller.response.user.UserResponse;
 import org.nharbachyk.diplomabackend.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -19,7 +21,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public Long create(@RequestBody CreateUserRequest createUserRequest) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Long create(@RequestBody @Valid CreateUserRequest createUserRequest) {
         return userService.create(createUserRequest);
     }
 
@@ -33,16 +36,46 @@ public class UserController {
         return userService.findById(id);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Long id, @RequestBody @Valid UpdateUserRequest updateUser) {
         userService.update(id, updateUser);
     }
 
-    @PatchMapping("/{id}/roles")
+    @PatchMapping("/{id}/roles/{roleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addRole(@PathVariable Long id, @RequestBody Long roleId) {
+    public void addRole(@PathVariable Long id, @PathVariable Long roleId) {
         userService.addRole(id, roleId);
+    }
+
+    @PatchMapping("/{id}/email")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateEmail(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateUserEmailRequest request,
+            Principal principal
+    ) {
+        userService.updateEmail(id, request, principal.getName());
+    }
+
+    @PatchMapping("/{id}/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updatePassword(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateUserPasswordRequest request,
+            Principal principal
+    ) {
+        userService.updatePassword(id, request, principal.getName());
+    }
+
+    @PatchMapping("/{id}/login")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateLogin(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateUserLoginRequest request,
+            Principal principal
+    ) {
+        userService.updateLogin(id, request, principal.getName());
     }
 
     @DeleteMapping("/{id}")
@@ -51,9 +84,10 @@ public class UserController {
         userService.delete(id);
     }
 
-    @DeleteMapping("/{id}/roles")
+    @DeleteMapping("/{id}/roles/{roleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeRole(@PathVariable Long id, @RequestBody Long roleId) {
+    public void removeRole(@PathVariable Long id, @PathVariable Long roleId) {
         userService.removeRole(id, roleId);
     }
+
 }

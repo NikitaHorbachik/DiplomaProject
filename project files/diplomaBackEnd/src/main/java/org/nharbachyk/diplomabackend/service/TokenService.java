@@ -1,6 +1,6 @@
 package org.nharbachyk.diplomabackend.service;
 
-import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
+import org.nharbachyk.diplomabackend.controller.response.user.TokenResponse;
 import org.springframework.security.core.AuthenticationException;
 
 public interface TokenService {

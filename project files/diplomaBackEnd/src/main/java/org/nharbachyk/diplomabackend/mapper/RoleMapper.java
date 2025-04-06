@@ -1,7 +1,6 @@
 package org.nharbachyk.diplomabackend.mapper;
 
-import org.nharbachyk.diplomabackend.controller.request.RoleRequest;
-import org.nharbachyk.diplomabackend.entities.RoleEntity;
+import org.nharbachyk.diplomabackend.entities.user.RoleEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -10,12 +9,6 @@ import java.util.List;
 
 @Component
 public class RoleMapper {
-
-    public RoleEntity toRoleEntity(RoleRequest roleRequest) {
-        RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setAuthority(roleRequest.name());
-        return roleEntity;
-    }
 
     public GrantedAuthority toGrantedAuthority(RoleEntity roleEntity) {
         return new SimpleGrantedAuthority(roleEntity.getAuthority());

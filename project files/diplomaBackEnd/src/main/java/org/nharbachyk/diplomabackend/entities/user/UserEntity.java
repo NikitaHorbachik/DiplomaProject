@@ -1,8 +1,9 @@
-package org.nharbachyk.diplomabackend.entities;
+package org.nharbachyk.diplomabackend.entities.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.nharbachyk.diplomabackend.entities.BaseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class UserEntity extends BaseEntity<Long> {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "m2m_users_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<RoleEntity> roles = new ArrayList<>();
@@ -42,4 +43,5 @@ public class UserEntity extends BaseEntity<Long> {
         return this.getClass().getSimpleName() + "[username= " + username + ", email=" + email + ", name=" + name +
                 ", surname=" + surname + "]";
     }
+
 }

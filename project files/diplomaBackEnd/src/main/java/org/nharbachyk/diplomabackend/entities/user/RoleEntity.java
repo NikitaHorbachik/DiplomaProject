@@ -1,4 +1,4 @@
-package org.nharbachyk.diplomabackend.entities;
+package org.nharbachyk.diplomabackend.entities.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.nharbachyk.diplomabackend.entities.BaseEntity;
 
 @Entity
 @Table(name = "u_roles")
@@ -23,4 +24,5 @@ public class RoleEntity extends BaseEntity<Long> {
     public String toString() {
         return this.getClass().getSimpleName() + " [authority=" + authority + "]";
     }
+
 }

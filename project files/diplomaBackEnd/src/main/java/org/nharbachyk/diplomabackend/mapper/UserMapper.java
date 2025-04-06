@@ -1,11 +1,11 @@
 package org.nharbachyk.diplomabackend.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.request.CreateUserRequest;
-import org.nharbachyk.diplomabackend.controller.request.UpdateUserRequest;
-import org.nharbachyk.diplomabackend.controller.response.UserResponse;
-import org.nharbachyk.diplomabackend.entities.RoleEntity;
-import org.nharbachyk.diplomabackend.entities.UserEntity;
+import org.nharbachyk.diplomabackend.controller.request.user.CreateUserRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.UpdateUserRequest;
+import org.nharbachyk.diplomabackend.controller.response.user.UserResponse;
+import org.nharbachyk.diplomabackend.entities.user.RoleEntity;
+import org.nharbachyk.diplomabackend.entities.user.UserEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,6 @@ public class UserMapper {
     }
 
     public void updateEntity(UpdateUserRequest updateUser, UserEntity updatedUser) {
-        updatedUser.setEmail(updateUser.email());
         updatedUser.setName(updateUser.name());
         updatedUser.setSurname(updateUser.surname());
     }

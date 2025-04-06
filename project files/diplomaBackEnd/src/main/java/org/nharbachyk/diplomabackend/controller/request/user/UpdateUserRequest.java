@@ -1,7 +1,6 @@
-package org.nharbachyk.diplomabackend.controller.request;
+package org.nharbachyk.diplomabackend.controller.request.user;
 
 public record UpdateUserRequest(
-        String email,
         String name,
         String surname) {
 }

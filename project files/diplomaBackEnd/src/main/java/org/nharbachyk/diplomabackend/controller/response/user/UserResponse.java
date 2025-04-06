@@ -1,4 +1,4 @@
-package org.nharbachyk.diplomabackend.controller.response;
+package org.nharbachyk.diplomabackend.controller.response.user;
 
 import java.util.List;
 

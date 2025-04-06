@@ -1,0 +1,15 @@
+meta {
+  name: findByCargo
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{path}}/trip-reports/cargo?cargoId=FREIGHT-123
+  body: none
+  auth: inherit
+}
+
+params:query {
+  cargoId: FREIGHT-123
+}
