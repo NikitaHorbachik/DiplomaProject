@@ -1,4 +1,4 @@
-package org.nharbachyk.diplomabackend.controller.request;
+package org.nharbachyk.diplomabackend.controller.request.user;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 
 
 public record CreateDriverRequest(
+
         @NotNull Long userId,
 
         @Pattern(regexp = "^[A-Z0-9]{8,20}$", message = "License number must be 8-20 alphanumeric characters")

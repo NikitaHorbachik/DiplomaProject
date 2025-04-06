@@ -1,4 +1,4 @@
-package org.nharbachyk.diplomabackend.controller.response;
+package org.nharbachyk.diplomabackend.controller.response.user;
 
 public record DriverResponse(
         Long userId,

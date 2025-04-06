@@ -1,4 +1,4 @@
-package org.nharbachyk.diplomabackend.controller.request;
+package org.nharbachyk.diplomabackend.controller.request.user;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;

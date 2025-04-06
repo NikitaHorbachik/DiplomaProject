@@ -30,6 +30,10 @@ public class DriverEntity extends BaseEntity<Long> {
     @Column(name = "phone")
     private String phone;
 
+    public String getFullName() {
+        return user.getName() + " " + user.getSurname();
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +

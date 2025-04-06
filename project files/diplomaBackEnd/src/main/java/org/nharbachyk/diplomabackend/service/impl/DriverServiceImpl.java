@@ -1,8 +1,8 @@
-package org.nharbachyk.diplomabackend.service;
+package org.nharbachyk.diplomabackend.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.request.CreateDriverRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.CreateDriverRequest;
 import org.nharbachyk.diplomabackend.entities.tripReport.DriverEntity;
 import org.nharbachyk.diplomabackend.entities.user.RoleEntity;
 import org.nharbachyk.diplomabackend.entities.user.UserEntity;
@@ -10,6 +10,7 @@ import org.nharbachyk.diplomabackend.exceptions.UserNotFoundException;
 import org.nharbachyk.diplomabackend.repository.jpa.DriverRepository;
 import org.nharbachyk.diplomabackend.repository.jpa.RoleRepository;
 import org.nharbachyk.diplomabackend.repository.jpa.UserRepository;
+import org.nharbachyk.diplomabackend.service.DriverService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

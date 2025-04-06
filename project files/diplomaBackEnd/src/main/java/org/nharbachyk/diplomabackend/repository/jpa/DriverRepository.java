@@ -4,7 +4,7 @@ import org.nharbachyk.diplomabackend.entities.tripReport.DriverEntity;
 import org.nharbachyk.diplomabackend.entities.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DriverRepository extends JpaRepository<DriverEntity, Integer> {
+public interface DriverRepository extends JpaRepository<DriverEntity, Long> {
 
     boolean existsByUser(UserEntity user);
 

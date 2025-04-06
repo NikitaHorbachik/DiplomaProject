@@ -1,8 +1,8 @@
 package org.nharbachyk.diplomabackend.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.request.CreateDriverRequest;
-import org.nharbachyk.diplomabackend.controller.response.DriverResponse;
+import org.nharbachyk.diplomabackend.controller.request.user.CreateDriverRequest;
+import org.nharbachyk.diplomabackend.controller.response.user.DriverResponse;
 import org.nharbachyk.diplomabackend.entities.tripReport.DriverEntity;
 import org.nharbachyk.diplomabackend.entities.user.UserEntity;
 import org.springframework.stereotype.Component;

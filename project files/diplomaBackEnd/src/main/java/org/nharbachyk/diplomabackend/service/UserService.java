@@ -1,9 +1,9 @@
 package org.nharbachyk.diplomabackend.service;
 
 import jakarta.validation.Valid;
-import org.nharbachyk.diplomabackend.controller.request.CreateUserRequest;
-import org.nharbachyk.diplomabackend.controller.request.UpdateUserRequest;
-import org.nharbachyk.diplomabackend.controller.response.UserResponse;
+import org.nharbachyk.diplomabackend.controller.request.user.CreateUserRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.UpdateUserRequest;
+import org.nharbachyk.diplomabackend.controller.response.user.UserResponse;
 import org.nharbachyk.diplomabackend.entities.user.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

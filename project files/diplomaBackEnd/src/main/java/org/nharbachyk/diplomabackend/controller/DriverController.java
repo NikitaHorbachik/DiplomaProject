@@ -2,7 +2,7 @@ package org.nharbachyk.diplomabackend.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.request.CreateDriverRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.CreateDriverRequest;
 import org.nharbachyk.diplomabackend.service.DriverService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
