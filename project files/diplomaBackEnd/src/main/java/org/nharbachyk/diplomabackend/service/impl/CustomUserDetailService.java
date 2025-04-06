@@ -1,7 +1,8 @@
-package org.nharbachyk.diplomabackend.service;
+package org.nharbachyk.diplomabackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.mapper.UserMapper;
+import org.nharbachyk.diplomabackend.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

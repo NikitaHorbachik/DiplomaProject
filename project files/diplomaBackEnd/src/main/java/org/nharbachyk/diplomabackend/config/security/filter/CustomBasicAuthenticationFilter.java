@@ -4,7 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
+import org.nharbachyk.diplomabackend.controller.response.user.TokenResponse;
 import org.nharbachyk.diplomabackend.service.TokenService;
 import org.nharbachyk.diplomabackend.utils.SecurityUtils;
 import org.springframework.http.MediaType;

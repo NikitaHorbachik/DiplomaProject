@@ -1,14 +1,16 @@
-package org.nharbachyk.diplomabackend.service;
+package org.nharbachyk.diplomabackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.request.user.*;
-import org.nharbachyk.diplomabackend.controller.response.UserResponse;
-import org.nharbachyk.diplomabackend.entities.RoleEntity;
-import org.nharbachyk.diplomabackend.entities.UserEntity;
+import org.nharbachyk.diplomabackend.controller.request.user.CreateUserRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.UpdateUserRequest;
+import org.nharbachyk.diplomabackend.controller.response.user.UserResponse;
+import org.nharbachyk.diplomabackend.entities.user.RoleEntity;
+import org.nharbachyk.diplomabackend.entities.user.UserEntity;
 import org.nharbachyk.diplomabackend.exceptions.UserNotFoundException;
 import org.nharbachyk.diplomabackend.mapper.UserMapper;
 import org.nharbachyk.diplomabackend.repository.jpa.RoleRepository;
 import org.nharbachyk.diplomabackend.repository.jpa.UserRepository;
+import org.nharbachyk.diplomabackend.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;

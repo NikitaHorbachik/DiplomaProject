@@ -1,0 +1,17 @@
+meta {
+  name: findByID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{path}}/trip-reports?page=0&size=10&sort=startDatetime
+  body: none
+  auth: inherit
+}
+
+params:query {
+  page: 0
+  size: 10
+  sort: startDatetime
+}

@@ -1,13 +1,14 @@
-package org.nharbachyk.diplomabackend.service;
+package org.nharbachyk.diplomabackend.service.impl;
 
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.response.TokenResponse;
+import org.nharbachyk.diplomabackend.controller.response.user.TokenResponse;
 import org.nharbachyk.diplomabackend.entities.redis.AccessTokenEntity;
 import org.nharbachyk.diplomabackend.entities.redis.RefreshTokenEntity;
 import org.nharbachyk.diplomabackend.repository.redis.AccessTokenRepository;
 import org.nharbachyk.diplomabackend.repository.redis.RefreshTokenRepository;
+import org.nharbachyk.diplomabackend.service.TokenService;
 import org.nharbachyk.diplomabackend.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
