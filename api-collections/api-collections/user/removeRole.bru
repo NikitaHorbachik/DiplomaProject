@@ -1,11 +1,11 @@
 meta {
   name: removeRole
   type: http
-  seq: 6
+  seq: 7
 }
 
 delete {
-  url: {{path}}/users/{{id}}/roles
+  url: {{path}}/users/{{id}}/roles/{{roleId}}
   body: json
   auth: none
 }
@@ -16,4 +16,5 @@ body:json {
 
 vars:pre-request {
   id: 9
+  roleId: 1
 }

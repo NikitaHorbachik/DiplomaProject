@@ -25,6 +25,12 @@ public interface UserService {
 
     void update(Long id, @Valid UpdateUserRequest updateUser);
 
+    void updateEmail(Long id, @Valid UpdateUserEmailRequest request, String login);
+
+    void updatePassword(Long id, @Valid UpdateUserPasswordRequest request, String login);
+
+    void updateLogin(Long id, @Valid UpdateUserLoginRequest request, String login);
+
     @Transactional
     void addRole(Long id, Long roleId);
 
