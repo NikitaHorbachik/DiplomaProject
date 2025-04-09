@@ -5,29 +5,33 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 public record CreateTripReportRequest(
-        @NotNull(message = "Driver ID is required")
+        @NotNull
         Long driverId,
 
-        @Size(max = 255, message = "Cargo ID must be less than 255 characters")
+        @Size
         String cargoId,
 
-        @NotBlank(message = "Start location is required")
+        @NotBlank
         @Size(max = 1000, message = "Start location too long")
         String startLocation,
 
-        @NotBlank(message = "End location is required")
+        @NotBlank
         @Size(max = 1000, message = "End location too long")
         String endLocation,
 
-        @NotNull(message = "Start datetime is required")
-        @Past(message = "End datetime must be in past")
+        @NotNull
+        @PastOrPresent(message = "Start date must be in past or present")
         LocalDateTime startDatetime,
 
-        @NotNull(message = "End datetime is required")
-        @PastOrPresent(message = "Start datetime must be in past or now")
+        @NotNull
+        @PastOrPresent(message = "End date must be in past or present")
         LocalDateTime endDatetime,
 
-        @PositiveOrZero(message = "Fuel consumption cannot be negative")
+        @PositiveOrZero
+        @NotNull(message = "Distance is required")
+        Double distanceKm,
+
+        @PositiveOrZero
         Long totalFuelConsumed
 ) {
 }
