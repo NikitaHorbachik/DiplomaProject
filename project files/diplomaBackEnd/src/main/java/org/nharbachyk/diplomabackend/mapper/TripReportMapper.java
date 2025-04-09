@@ -26,6 +26,7 @@ public class TripReportMapper {
                 .startDatetime(request.startDatetime())
                 .endDatetime(request.endDatetime())
                 .totalFuelConsumed(request.totalFuelConsumed())
+                .distanceKm(request.distanceKm())
                 .build();
     }
 
@@ -37,10 +38,11 @@ public class TripReportMapper {
                 entity.getCargoId(),
                 entity.getStartLocation(),
                 entity.getEndLocation(),
+                entity.getDistanceKm(),
                 entity.getStartDatetime(),
                 entity.getEndDatetime(),
-                entity.getTotalFuelConsumed(),
-                entity.getCreatedAt()
+                entity.calculateAverageSpeed(),
+                entity.getTotalFuelConsumed()
         );
     }
 

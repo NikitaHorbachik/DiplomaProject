@@ -1,6 +1,6 @@
 package org.nharbachyk.diplomabackend.controller.request.tripReport;
 
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
@@ -13,8 +13,11 @@ public record UpdateTripReportRequest(
         @Size(max = 1000)
         String endLocation,
 
-        @Future
+        @FutureOrPresent
         LocalDateTime endDatetime,
+
+        @PositiveOrZero
+        Double distanceKm,
 
         @PositiveOrZero
         Long totalFuelConsumed
