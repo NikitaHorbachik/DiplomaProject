@@ -1,8 +1,7 @@
 package org.nharbachyk.diplomabackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.nharbachyk.diplomabackend.controller.request.user.CreateUserRequest;
-import org.nharbachyk.diplomabackend.controller.request.user.UpdateUserRequest;
+import org.nharbachyk.diplomabackend.controller.request.user.*;
 import org.nharbachyk.diplomabackend.controller.response.user.UserResponse;
 import org.nharbachyk.diplomabackend.entities.user.RoleEntity;
 import org.nharbachyk.diplomabackend.entities.user.UserEntity;

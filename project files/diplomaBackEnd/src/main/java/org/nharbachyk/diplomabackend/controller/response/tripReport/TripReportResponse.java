@@ -9,9 +9,10 @@ public record TripReportResponse(
         String cargoId,
         String startLocation,
         String endLocation,
+        Double distanceKm,
         LocalDateTime startDatetime,
         LocalDateTime endDatetime,
-        Long totalFuelConsumed,
-        LocalDateTime createdAt
+        Double averageSpeedKmh,
+        Long totalFuelConsumed
 ) {
 }
