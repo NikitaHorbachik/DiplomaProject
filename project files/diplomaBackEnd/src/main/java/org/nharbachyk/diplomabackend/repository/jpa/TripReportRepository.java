@@ -1,6 +1,7 @@
 package org.nharbachyk.diplomabackend.repository.jpa;
 
 import jakarta.validation.constraints.NotNull;
+import org.nharbachyk.diplomabackend.entities.tripReport.DriverEntity;
 import org.nharbachyk.diplomabackend.entities.tripReport.TripReportEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface TripReportRepository extends JpaRepository<TripReportEntity, Long> {
 
-    <T> List<TripReportEntity> findAllByDriver_IdAndStartDatetimeAfterAndEndDatetimeBefore(@NotNull T driverId,
+    <T> List<TripReportEntity> findAllByDriver_IdAndStartDatetimeAfterAndEndDatetimeBefore(T driver_id,
                                                                                            @NotNull LocalDateTime startDatetime,
                                                                                            @NotNull LocalDateTime endDatetime);
 
@@ -19,7 +20,16 @@ public interface TripReportRepository extends JpaRepository<TripReportEntity, Lo
                                                                                      @NotNull LocalDateTime startDatetime,
                                                                                      @NotNull LocalDateTime endDatetime, Pageable pageable);
 
-    <T> Page<TripReportEntity> findByDriver_Id(T driverId, Pageable pageable);
+    <T> Page<TripReportEntity> findByDriver_Id(T driver_id, Pageable pageable);
 
+    List<TripReportEntity> findAllByDriver(@NotNull DriverEntity driver);
+
+    List<TripReportEntity> findAllByDriverAndEndDatetimeBefore(@NotNull DriverEntity driver, @NotNull LocalDateTime endDatetime);
+
+    List<TripReportEntity> findAllByDriverAndStartDatetimeAfter(@NotNull DriverEntity driver, @NotNull LocalDateTime startDatetime);
+
+    List<TripReportEntity> findAllByDriverAndStartDatetimeAfterAndEndDatetimeBefore(@NotNull DriverEntity driver,
+                                                                                    @NotNull LocalDateTime startDatetime,
+                                                                                    @NotNull LocalDateTime endDatetime);
 
 }

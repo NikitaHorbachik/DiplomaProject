@@ -4,22 +4,22 @@ meta {
   seq: 8
 }
 
-put {
+patch {
   url: {{path}}/users/{{id}}/login
   body: json
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0X3VzZXIiLCJpYXQiOjE3NDMwODMzMDQsImV4cCI6MTg5ODYwMzMwNH0.FxgUcxdl2bhRO23TGDEdg_j4GRxGxFu9pq6YqwXDbFg
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZWN1cmVkMSIsImlhdCI6MTc0NDIyMzk1OCwiZXhwIjoxODk5NzQzOTU4fQ.WNlrBKdqYE2xL1uUFYlsgvuJrgOlDURt25Na4kmuIDg
 }
 
 body:json {
   {
-    "username": "new_test"
+    "username": "secured"
   }
 }
 
 vars:pre-request {
-  id: 17
+  id: 13
 }
