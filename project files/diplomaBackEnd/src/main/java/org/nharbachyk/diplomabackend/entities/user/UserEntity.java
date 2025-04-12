@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.nharbachyk.diplomabackend.entities.BaseEntity;
+import org.nharbachyk.diplomabackend.entities.organization.OrganizationEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,10 @@ public class UserEntity extends BaseEntity<Long> {
     @JoinTable(name = "m2m_users_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<RoleEntity> roles = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "organization_id")
+    private OrganizationEntity organization;
 
     @Override
     public String toString() {

@@ -6,6 +6,8 @@ import org.nharbachyk.diplomabackend.entities.tripReport.TripReportEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,5 +33,14 @@ public interface TripReportRepository extends JpaRepository<TripReportEntity, Lo
     List<TripReportEntity> findAllByDriverAndStartDatetimeAfterAndEndDatetimeBefore(@NotNull DriverEntity driver,
                                                                                     @NotNull LocalDateTime startDatetime,
                                                                                     @NotNull LocalDateTime endDatetime);
+
+    @Query("SELECT t FROM TripReportEntity t WHERE t.driver IN :drivers "
+            + "AND (:startDate IS NULL OR t.startDatetime >= :startDate) "
+            + "AND (:endDate IS NULL OR t.endDatetime <= :endDate)")
+    List<TripReportEntity> findAllByDriverInAndDateRange(
+            @Param("drivers") List<DriverEntity> drivers,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
 
 }

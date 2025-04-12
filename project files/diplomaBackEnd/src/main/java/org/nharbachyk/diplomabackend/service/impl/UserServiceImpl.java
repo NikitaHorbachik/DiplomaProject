@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -60,6 +62,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserResponse> findUsersByOrganizationId(Long organizationId) {
+        return userRepository.findByOrganization_Id(organizationId)
+                .stream()
+                .map(userMapper::toResponse)
+                .toList();
+    }
+
+
+    @Override
     public void update(Long id, UpdateUserRequest updateUser) {
         UserEntity updatedUser = getByIdOrThrow(id);
         userMapper.updateEntity(updateUser, updatedUser);
@@ -85,7 +96,7 @@ public class UserServiceImpl implements UserService {
         if (!user.getUsername().equals(login)) {
             throw new AccessDeniedException("You can only change your own email");
         }
-        if(passwordEncoder.matches(request.password(), user.getPassword())) {
+        if (passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new AccessDeniedException("You cannot use your old password");
         }
 

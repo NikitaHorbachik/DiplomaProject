@@ -2,6 +2,7 @@ package org.nharbachyk.diplomabackend.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.nharbachyk.diplomabackend.controller.response.organization.OrganizationStatisticResponse;
 import org.nharbachyk.diplomabackend.controller.response.statistics.DriverStatisticResponse;
 import org.nharbachyk.diplomabackend.entities.tripReport.DriverEntity;
 import org.nharbachyk.diplomabackend.entities.tripReport.TripReportEntity;
@@ -41,6 +42,37 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         return calculateDriverStatistics(driver, trips);
+    }
+
+    @Override
+    public OrganizationStatisticResponse getOrganizationStatistics(Long organizationId, LocalDate startDate, LocalDate endDate) {
+        List<DriverEntity> drivers = driverRepository.findAllByUser_Organization_Id(organizationId);
+        if (drivers.isEmpty()) {
+            throw new EntityNotFoundException("No drivers found for organization");
+        }
+
+        List<TripReportEntity> trips = tripReportRepository.findAllByDriverInAndDateRange(drivers,
+                startDate.atStartOfDay(),
+                endDate.atStartOfDay());
+
+        double totalDistance = trips.stream()
+                .mapToDouble(TripReportEntity::getDistanceKm)
+                .sum();
+
+        long totalFuel = trips.stream()
+                .mapToLong(t -> t.getTotalFuelConsumed() != null ? t.getTotalFuelConsumed() : 0)
+                .sum();
+
+        return OrganizationStatisticResponse.builder()
+                .organizationId(organizationId)
+                .totalDrivers(drivers.size())
+                .totalTrips(trips.size())
+                .totalDistanceKm(totalDistance)
+                .totalFuelConsumed(totalFuel)
+                .averageFuelConsumptionPer100Km(calculateAvgFuelConsumption(totalFuel, totalDistance))
+                .averageSpeedKmh(calculateAvgSpeed(trips))
+                .cargoTransportPercentage(calculateCargoPercentage(trips))
+                .build();
     }
 
     private DriverStatisticResponse calculateDriverStatistics(DriverEntity driver, List<TripReportEntity> trips) {
