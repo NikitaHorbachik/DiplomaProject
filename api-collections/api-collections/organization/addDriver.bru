@@ -1,0 +1,16 @@
+meta {
+  name: addDriver
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{path}}/organizations/:id/drivers/:driverId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  driverId: 2
+  id: 1
+}
