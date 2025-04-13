@@ -27,7 +27,7 @@ public class StatisticsController {
         return statisticsService.getDriverStatistics(driverId, startDate, endDate);
     }
 
-    @GetMapping("/organization/{organizationId}/statistics")
+    @GetMapping("/organization/{organizationId}")
     public OrganizationStatisticResponse getOrganizationStats(
             @PathVariable Long organizationId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,

@@ -40,6 +40,18 @@ public class OrganizationController {
         organizationService.update(id, request);
     }
 
+    @PatchMapping("/{id}/drivers/{driverId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addDriver(@PathVariable Long id, @PathVariable Long driverId) {
+        organizationService.addDriver(id, driverId);
+    }
+
+    @DeleteMapping("/{id}/drivers/{driverId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeDriver(@PathVariable Long id, @PathVariable Long driverId) {
+        organizationService.removeDriver(id, driverId);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {

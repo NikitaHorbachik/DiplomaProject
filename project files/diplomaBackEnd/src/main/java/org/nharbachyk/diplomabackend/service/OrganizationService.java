@@ -12,4 +12,8 @@ public interface OrganizationService {
     OrganizationResponse findById(Long id);
     void update(Long id, UpdateOrganizationRequest request);
     void delete(Long id);
+
+    void addDriver(Long id, Long driverId);
+
+    void removeDriver(Long id, Long driverId);
 }
