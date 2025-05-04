@@ -51,6 +51,11 @@ public class DriverServiceImpl implements DriverService {
         return savedDriver.getId();
     }
 
+    @Override
+    public DriverEntity getByIdOrThrow(Long id) {
+        return driverRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
     @Transactional
     @Override
     public void removeDriverRole(Long userId) {

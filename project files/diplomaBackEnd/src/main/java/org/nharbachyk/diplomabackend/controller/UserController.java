@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -33,6 +34,11 @@ public class UserController {
     @GetMapping("/{id}")
     public UserResponse findById(@PathVariable Long id) {
         return userService.findById(id);
+    }
+
+    @GetMapping("/by-organization/{organizationId}")
+    public List<UserResponse> getUsersByOrganization(@PathVariable Long organizationId) {
+        return userService.findUsersByOrganizationId(organizationId);
     }
 
     @PatchMapping("/{id}")

@@ -1,0 +1,15 @@
+meta {
+  name: organStats
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{path}}/statistics/organization/:organizationId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  organizationId: 1
+}

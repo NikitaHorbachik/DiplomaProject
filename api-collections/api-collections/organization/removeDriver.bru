@@ -1,0 +1,16 @@
+meta {
+  name: removeDriver
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{path}}/organizations/:id/drivers/:driverId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  driverId: 2
+  id: 1
+}
