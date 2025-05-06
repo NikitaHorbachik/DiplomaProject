@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 public interface UserService {
 
     Long create(CreateUserRequest createUserRequest);
@@ -19,12 +17,13 @@ public interface UserService {
     UserResponse findById(Long id);
 
     @Transactional
+    UserResponse findByLogin(String username) throws UsernameNotFoundException;
+
+    @Transactional
     Page<UserResponse> findAll(Pageable pageable);
 
     @Transactional
     UserEntity findByLoginOrThrow(String username) throws UsernameNotFoundException;
-
-    List<UserResponse> findUsersByOrganizationId(Long organizationId);
 
     void update(Long id, @Valid UpdateUserRequest updateUser);
 

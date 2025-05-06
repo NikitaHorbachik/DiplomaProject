@@ -3,6 +3,7 @@ package org.nharbachyk.diplomabackend.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.controller.request.user.CreateDriverRequest;
+import org.nharbachyk.diplomabackend.controller.response.IdResponse;
 import org.nharbachyk.diplomabackend.service.DriverService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,9 @@ public class DriverController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Long createDriver(
+    public IdResponse createDriver(
             @RequestBody @Valid CreateDriverRequest request) {
-        return driverService.createDriver(request);
+        return new IdResponse(driverService.createDriver(request));
     }
 
     @DeleteMapping("/{userId}")
@@ -27,4 +28,5 @@ public class DriverController {
         driverService.removeDriverRole(userId);
         return ResponseEntity.noContent().build();
     }
+
 }

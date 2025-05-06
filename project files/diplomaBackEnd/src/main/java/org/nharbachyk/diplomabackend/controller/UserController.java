@@ -3,6 +3,7 @@ package org.nharbachyk.diplomabackend.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.controller.request.user.*;
+import org.nharbachyk.diplomabackend.controller.response.IdResponse;
 import org.nharbachyk.diplomabackend.controller.response.user.UserResponse;
 import org.nharbachyk.diplomabackend.service.UserService;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -22,8 +22,8 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestBody @Valid CreateUserRequest createUserRequest) {
-        return userService.create(createUserRequest);
+    public IdResponse create(@RequestBody @Valid CreateUserRequest createUserRequest) {
+        return new IdResponse(userService.create(createUserRequest));
     }
 
     @GetMapping
@@ -36,9 +36,9 @@ public class UserController {
         return userService.findById(id);
     }
 
-    @GetMapping("/by-organization/{organizationId}")
-    public List<UserResponse> getUsersByOrganization(@PathVariable Long organizationId) {
-        return userService.findUsersByOrganizationId(organizationId);
+    @GetMapping("/login/{login}")
+    public UserResponse findById(@PathVariable String login) {
+        return userService.findByLogin(login);
     }
 
     @PatchMapping("/{id}")

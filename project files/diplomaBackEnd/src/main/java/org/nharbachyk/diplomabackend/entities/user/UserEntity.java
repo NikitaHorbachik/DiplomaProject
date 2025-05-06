@@ -34,18 +34,35 @@ public class UserEntity extends BaseEntity<Long> {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @ManyToOne
+    @JoinColumn(name = "organization_id")
+    private OrganizationEntity organization;
+
+    public String getFullName() {
+        return name + (surname != null ? " " + surname : "");
+    }
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "m2m_users_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<RoleEntity> roles = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "organization_id")
-    private OrganizationEntity organization;
+    public UserEntity(Long id) {
+        super(id);
+    }
+
+    public boolean hasRole(String role) {
+        for (RoleEntity roleEntity : roles) {
+            if(roleEntity.getAuthority().equals(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "[username= " + username + ", email=" + email + ", name=" + name +
+        return this.getClass().getSimpleName() + "[name= " + username + ", email=" + email + ", name=" + name +
                 ", surname=" + surname + "]";
     }
 

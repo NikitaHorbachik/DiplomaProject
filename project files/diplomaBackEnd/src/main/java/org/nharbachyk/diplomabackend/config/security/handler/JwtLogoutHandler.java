@@ -33,4 +33,5 @@ public class JwtLogoutHandler implements LogoutHandler {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
     }
+
 }

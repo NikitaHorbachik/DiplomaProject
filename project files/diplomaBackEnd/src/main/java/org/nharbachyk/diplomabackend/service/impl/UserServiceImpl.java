@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +36,14 @@ public class UserServiceImpl implements UserService {
         String unencryptedPassword = userEntity.getPassword();
         String encryptedPassword = passwordEncoder.encode(unencryptedPassword);
         userEntity.setPassword(encryptedPassword);
+        userEntity.setRoles(
+                createUser.roles()
+                        .stream()
+                        .map(roleRequest -> roleRepository.findByAuthority(roleRequest.name()))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .toList()
+        );
 
         return userRepository.save(userEntity).getId();
     }
@@ -49,6 +57,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public UserResponse findByLogin(String username) throws UsernameNotFoundException {
+        return userMapper.toResponse(userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user found with name " + username)));
+    }
+
+
+    @Transactional
+    @Override
     public Page<UserResponse> findAll(Pageable pageable) {
         Page<UserEntity> userEntities = userRepository.findAll(pageable);
         return userEntities.map(userMapper::toResponse);
@@ -58,17 +74,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity findByLoginOrThrow(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("No user found with username " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("No user found with name " + username));
     }
-
-    @Override
-    public List<UserResponse> findUsersByOrganizationId(Long organizationId) {
-        return userRepository.findByOrganization_Id(organizationId)
-                .stream()
-                .map(userMapper::toResponse)
-                .toList();
-    }
-
 
     @Override
     public void update(Long id, UpdateUserRequest updateUser) {
@@ -78,10 +85,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateEmail(Long id, UpdateUserEmailRequest request, String login) {
         UserEntity user = getByIdOrThrow(id);
 
-        if (!user.getUsername().equals(login)) {
+        if (!user.getUsername().equals(login)
+                && !getByUsernameOrThrow(login).hasRole("ADMIN")) {
             throw new AccessDeniedException("You can only change your own email");
         }
 
@@ -90,11 +99,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updatePassword(Long id, UpdateUserPasswordRequest request, String login) {
         UserEntity user = getByIdOrThrow(id);
 
-        if (!user.getUsername().equals(login)) {
-            throw new AccessDeniedException("You can only change your own email");
+        if (!user.getUsername().equals(login)
+                && !getByUsernameOrThrow(login).hasRole("ADMIN")) {
+            throw new AccessDeniedException("You can only change your own password");
         }
         if (passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new AccessDeniedException("You cannot use your old password");
@@ -105,11 +116,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateLogin(Long id, UpdateUserLoginRequest request, String login) {
         UserEntity user = getByIdOrThrow(id);
 
-        if (!user.getUsername().equals(login)) {
-            throw new AccessDeniedException("You can only change your own login");
+        if (!user.getUsername().equals(login)
+                && !getByUsernameOrThrow(login).hasRole("ADMIN")) {
+            throw new AccessDeniedException("You can only change your own password");
         }
 
         user.setUsername(request.username());
@@ -146,6 +159,11 @@ public class UserServiceImpl implements UserService {
 
     private RoleEntity getRoleByIdOrThrow(Long roleId) {
         return roleRepository.findById(roleId)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    private UserEntity getByUsernameOrThrow(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
     }
 
