@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.controller.request.organization.CreateOrganizationRequest;
 import org.nharbachyk.diplomabackend.controller.request.organization.UpdateOrganizationRequest;
+import org.nharbachyk.diplomabackend.controller.response.IdResponse;
 import org.nharbachyk.diplomabackend.controller.response.organization.OrganizationResponse;
 import org.nharbachyk.diplomabackend.service.OrganizationService;
 import org.springframework.data.domain.Page;
@@ -20,8 +21,8 @@ public class OrganizationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestBody @Valid CreateOrganizationRequest request) {
-        return organizationService.create(request);
+    public IdResponse create(@RequestBody @Valid CreateOrganizationRequest request) {
+        return new IdResponse(organizationService.create(request));
     }
 
     @GetMapping

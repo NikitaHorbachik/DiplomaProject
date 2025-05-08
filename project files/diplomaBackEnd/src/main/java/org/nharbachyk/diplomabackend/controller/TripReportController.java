@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nharbachyk.diplomabackend.controller.request.tripReport.CreateTripReportRequest;
 import org.nharbachyk.diplomabackend.controller.request.tripReport.UpdateTripReportRequest;
+import org.nharbachyk.diplomabackend.controller.response.IdResponse;
 import org.nharbachyk.diplomabackend.controller.response.tripReport.TripReportResponse;
 import org.nharbachyk.diplomabackend.service.TripReportService;
 import org.springframework.data.domain.Page;
@@ -23,8 +24,8 @@ public class TripReportController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestBody @Valid CreateTripReportRequest request) {
-        return tripReportService.create(request);
+    public IdResponse create(@RequestBody @Valid CreateTripReportRequest request) {
+        return new IdResponse(tripReportService.create(request));
     }
 
     @GetMapping
