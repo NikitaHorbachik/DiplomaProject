@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name_caps">INFORMATION SYSTEM FOR AUTOMOBILE TRACKING</string>
+    <string name="app_name">ISfAT</string>
+    <string name="username_string">Username</string>
+    <string name="fullname_string">Full Name</string>
+    <string name="email_string">Email</string>
+    <string name="password_string">Password</string>
+    <string name="password_confirmation_string">Confirm Password</string>
+    <string name="logo_image_string">Logo image</string>
+    <string name="go_string_caps">GO</string>
+    <string name="new_user_string">New User? SIGN UP</string>
+    <string name="sign_up_string">SIGN UP</string>
+    <string name="register_string">REGISTER</string>
+    <string name="already_have_acc_string">I ALREADY HAVE AN ACCOUNT</string>
+    <string name="account_status_desc_string">Account status</string>
+    <string name="active_string_caps">ACTIVE</string>
+    <string name="notification_desc_string">Notifications</string>
+    <string name="update_string_caps">UPDATE</string>
+    <string name="profile_string">Profile</string>
+    <string name="admin_panel_string">Admin panel</string>
+    <string name="id_string_caps">ID</string>
+    <string name="delete_account_string">delete account</string>
+    <string name="safe_switch_string">Delete switch</string>
+    <string name="generate_password_string">Generate new password</string>
+    <string name="edit_string_caps">EDIT</string>
+    <string name="automobiles_string">Automobiles</string>
+
+    <!-- error messages -->
+    <string name="empty_error">Field cannot be empty</string>
+    <string name="short8_error">Too short. Must be longer than 8 symbols</string>
+    <string name="long15_error">Too long. Must be shorter than 15 symbols</string>
+    <string name="white_space_error">White spaces are not allowed</string>
+    <string name="email_error">Invalid email address</string>
+    <string name="password_weak_error">Weak password</string>
+    <string name="password_equals_error">Passwords must be the same</string>
+
+    <!-- transition animation strings -->
+    <string name="transition_logo_string">transition_logo</string>
+    <string name="transition_big_text_string">transition_big_text</string>
+    <string name="transition_username_string">transition_username</string>
+    <string name="transition_password_string">transition_password</string>
+    <string name="transition_main_button_string">transition_main_button</string>
+    <string name="transition_second_button_string">transition_second_button</string>
+</resources>

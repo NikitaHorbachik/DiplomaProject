@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_profile"
+            android:title="@string/profile_string"
+            android:icon="@drawable/profile_icon"/>
+        <item
+            android:id="@+id/nav_automobiles"
+            android:title="@string/automobiles_string"
+            android:icon="@drawable/cars_menu_icon"/>
+        <item
+            android:id="@+id/nav_notifications"
+            android:title="@string/notification_desc_string"
+            android:icon="@drawable/notification_menu_icon"/>
+        <item
+            android:id="@+id/nav_admin_panel"
+            android:title="@string/admin_panel_string"
+            android:icon="@drawable/admin_panel_icon"/>
+    </group>
+
+</menu>
