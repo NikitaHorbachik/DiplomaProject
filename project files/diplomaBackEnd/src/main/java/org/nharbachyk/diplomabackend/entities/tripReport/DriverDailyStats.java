@@ -19,8 +19,8 @@ public class DriverDailyStats extends BaseEntity<Long> {
     @JoinColumn(name = "driver_id", nullable = false)
     private DriverEntity driver;
 
-    @Column(name = "stat_date", nullable = false)
-    private LocalDate statDate;
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
 
     @Column(name = "total_distance", nullable = false)
     private Double totalDistance;
