@@ -8,6 +8,8 @@ public interface DriverService {
     @Transactional
     Long createDriver(CreateDriverRequest request);
 
+    Long findDriverIdByUserId(Long id);
+
     DriverEntity getByIdOrThrow(Long id);
 
     @Transactional

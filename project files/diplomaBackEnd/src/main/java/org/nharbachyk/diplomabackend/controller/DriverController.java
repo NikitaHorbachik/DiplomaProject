@@ -23,6 +23,12 @@ public class DriverController {
         return new IdResponse(driverService.createDriver(request));
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<Void> findByUserId(@PathVariable Long userId) {
+        driverService.removeDriverRole(userId);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> removeDriverRole(@PathVariable Long userId) {
         driverService.removeDriverRole(userId);

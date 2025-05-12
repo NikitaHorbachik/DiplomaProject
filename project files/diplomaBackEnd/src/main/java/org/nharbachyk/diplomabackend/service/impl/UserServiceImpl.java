@@ -119,7 +119,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateLogin(Long id, UpdateUserLoginRequest request, String login) {
         UserEntity user = getByIdOrThrow(id);
-
         if (!user.getUsername().equals(login)
                 && !getByUsernameOrThrow(login).hasRole("ADMIN")) {
             throw new AccessDeniedException("You can only change your own password");
