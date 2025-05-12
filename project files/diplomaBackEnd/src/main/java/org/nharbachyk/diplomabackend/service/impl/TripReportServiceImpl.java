@@ -31,15 +31,7 @@ public class TripReportServiceImpl implements TripReportService {
     public Long create(CreateTripReportRequest request) {
         DriverEntity driver = getDriverOrThrow(request.driverId());
 
-        TripReportEntity tripReportEntity = TripReportEntity.builder()
-                .driver(driver)
-                .cargoId(request.cargoId())
-                .startLocation(request.startLocation())
-                .endLocation(request.endLocation())
-                .startDatetime(request.startDatetime())
-                .endDatetime(request.endDatetime())
-                .totalFuelConsumed(request.totalFuelConsumed())
-                .build();
+        TripReportEntity tripReportEntity = tripReportMapper.toEntity(request);
 
         TripReportEntity savedReport = tripReportRepository.save(tripReportEntity);
         return savedReport.getId();
